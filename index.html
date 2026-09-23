@@ -78,6 +78,64 @@ main{padding:24px 0 72px}.view{display:none}.view.active{display:block}
 @media(max-width:720px){.statusstrip{align-items:flex-start;flex-direction:column}.shiftmeta,.quickform,.miniFormGrid,.accountForms{grid-template-columns:1fr}.summarymini,.reportCards,.goalstats{grid-template-columns:1fr 1fr}.yearbars{overflow-x:auto;grid-template-columns:repeat(12,44px)}.yearsummary{grid-template-columns:1fr}.yearsummary>div{border-right:0;border-bottom:1px solid var(--line-soft)}.yearsummary>div:last-child{border-bottom:0}.financebody,.shiftbody,.reportbody,.accountbody{padding:16px}.patternRow{grid-template-columns:1.2fr .8fr}.patternRow>div:nth-child(3),.patternRow>div:nth-child(4){display:none}}
 @media print{.topbar,.mobileNav,.mobileAdd,.toast,.accountModal,.moreSheet,.noPrint{display:none!important}body{background:#fff;color:#111}.shell{width:100%!important;margin:0!important}.view{display:none!important}.view.printing{display:block!important}.reportpanel{box-shadow:none;border:0;background:#fff}.reportCard,.reportBlock{background:#fff;border-color:#ddd}.reportCard span,.reportLine span,.muted{color:#555!important}.reportCard strong,.reportLine strong,.reportpanel h1,.reportpanel h2,.reportpanel h3{color:#111!important}}
 
+
+/* Mobile UX refinements */
+@media(max-width:760px){
+  .brandright{gap:7px}
+  .brandright #accountTopBtn{
+    display:inline-flex;
+    max-width:150px;
+    height:36px;
+    padding:0 11px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:12px
+  }
+  .brandright #helpBtn{display:none}
+  .brandright #gearBtn{width:36px;height:36px}
+  .summarygrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .summarycard{min-height:112px;padding:13px}
+  .summaryvalue{font-size:18px}
+  .summarymeta{font-size:11px}
+  .statusstrip{padding:13px}
+  .mobileNav{height:70px}
+  .mobileNav button{min-height:54px}
+  .mobileAdd{bottom:82px}
+  .morePanel{max-height:76dvh;overflow:auto}
+  .morePanel button{min-height:50px;font-size:14px}
+  .accountModal{align-items:flex-end;padding:0}
+  .accountDialog{
+    width:100%;
+    max-height:92dvh;
+    border-radius:18px 18px 0 0;
+    border-left:0;
+    border-right:0;
+    border-bottom:0
+  }
+  .accountDialog .head{
+    position:sticky;
+    top:0;
+    z-index:2;
+    background:var(--panel);
+    padding:16px
+  }
+  .accountDialog .body{padding:16px 16px calc(22px + env(safe-area-inset-bottom))}
+  .accountDialog .syncActions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .accountDialog .syncActions .btn{width:100%;min-height:44px}
+  .accountDialog .sectionhead{margin-top:18px}
+  .accountForms .field input{min-height:46px}
+}
+@media(max-width:480px){
+  .summarygrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .performancegrid{grid-template-columns:1fr}
+  .summarycard{min-height:108px}
+  .summaryvalue{font-size:17px}
+  .brandmark{font-size:17px}
+  .brandright #accountTopBtn{max-width:118px;padding:0 9px}
+  .accountDialog .syncActions{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -747,6 +805,7 @@ async function accountAuth(mode){
       });
       if(error)throw error;
       if(!data.session){
+        closeAccount();
         toast('Conta criada. Confira seu e-mail para confirmar o cadastro.');
         return;
       }
@@ -761,6 +820,7 @@ async function accountAuth(mode){
       renderAll();
       await pushRemote(true);
       renderAccountStatus();
+      closeAccount();
       toast('Conta criada e sincronizada.');
     }else{
       const {data,error}=await supa.auth.signInWithPassword({email,password});
@@ -779,6 +839,7 @@ async function accountAuth(mode){
         localStorage.setItem(STORAGE,JSON.stringify(state));
         $('monthFilter').value=selectedMonth;
         renderAll();
+        closeAccount();
         toast('Login realizado e dados da nuvem carregados.');
       }else{
         state=clone(DEFAULT_STATE);
@@ -787,6 +848,7 @@ async function accountAuth(mode){
         $('monthFilter').value=selectedMonth;
         renderAll();
         await pushRemote(true);
+        closeAccount();
         toast('Login realizado. Esta conta começou com um painel vazio.');
       }
     }
@@ -823,7 +885,7 @@ function bind(){
   $('exportCsvBtn').addEventListener('click',exportCsv);$('reportCsvBtn').addEventListener('click',exportCsv);$('printReportBtn').addEventListener('click',printReport);qsa('#chartMode button').forEach(b=>b.addEventListener('click',()=>{chartMode=b.dataset.mode;qsa('#chartMode button').forEach(x=>x.classList.toggle('active',x===b));renderChart()}));
   $('shiftStripBtn').addEventListener('click',()=>{switchTab('turno');if(!state.shift?.active)startShift()});$('startShiftBtn').addEventListener('click',startShift);$('endShiftForm').addEventListener('submit',endShift);$('cancelShiftBtn').addEventListener('click',cancelShift);
   qsa('#financeSubnav button').forEach(b=>b.addEventListener('click',()=>showFinanceSub(b.dataset.sub)));$('fuelForm').addEventListener('submit',submitFuel);$('fuelCancelEdit').addEventListener('click',clearFuelForm);$('fuelBody').addEventListener('click',e=>{const a=e.target.closest('[data-fuel-edit]'),d=e.target.closest('[data-fuel-del]');if(a)editFuel(a.dataset.fuelEdit);if(d)openDelete('fuel',d.dataset.fuelDel,'este abastecimento')});$('expenseForm').addEventListener('submit',submitExpense);$('expenseCancelEdit').addEventListener('click',clearExpenseForm);$('expenseBody').addEventListener('click',e=>{const a=e.target.closest('[data-exp-edit]'),d=e.target.closest('[data-exp-del]');if(a)editExpense(a.dataset.expEdit);if(d)openDelete('expense',d.dataset.expDel,'esta despesa')});$('investmentForm').addEventListener('submit',submitInvestment);$('investmentCancelEdit').addEventListener('click',clearInvestmentForm);$('investmentBody').addEventListener('click',e=>{const a=e.target.closest('[data-inv-edit]'),d=e.target.closest('[data-inv-del]');if(a)editInvestment(a.dataset.invEdit);if(d)openDelete('investment',d.dataset.invDel,'esta transferência')});
-  $('accountOpenBtn').addEventListener('click',openAccount);$('accountTopBtn').addEventListener('click',openAccount);$('closeAccount').addEventListener('click',closeAccount);$('accountModal').addEventListener('click',e=>{if(e.target===$('accountModal'))closeAccount()});$('loginBtn').addEventListener('click',()=>accountAuth('login'));$('registerBtn').addEventListener('click',()=>accountAuth('register'));$('saveProfileBtn').addEventListener('click',saveProfileName);$('logoutBtn').addEventListener('click',logout);$('pushRemoteBtn').addEventListener('click',()=>pushRemote());$('pullRemoteBtn').addEventListener('click',pullRemote);$('backupNowBtn').addEventListener('click',exportLocalBackupNow);$('backupList').addEventListener('click',e=>{const b=e.target.closest('[data-local-restore]');if(b)restoreLocalBackup(Number(b.dataset.localRestore))});
+  $('accountOpenBtn').addEventListener('click',openAccount);$('accountTopBtn').addEventListener('click',openAccount);$('closeAccount').addEventListener('click',closeAccount);$('accountModal').addEventListener('click',e=>{if(e.target===$('accountModal'))closeAccount()});$('loginBtn').addEventListener('click',()=>accountAuth('login'));$('registerBtn').addEventListener('click',()=>accountAuth('register'));$('accountPassword').addEventListener('keydown',e=>{if(e.key==='Enter')accountAuth('login')});$('saveProfileBtn').addEventListener('click',saveProfileName);$('logoutBtn').addEventListener('click',logout);$('pushRemoteBtn').addEventListener('click',()=>pushRemote());$('pullRemoteBtn').addEventListener('click',pullRemote);$('backupNowBtn').addEventListener('click',exportLocalBackupNow);$('backupList').addEventListener('click',e=>{const b=e.target.closest('[data-local-restore]');if(b)restoreLocalBackup(Number(b.dataset.localRestore))});
   $('moreSheet').addEventListener('click',e=>{if(e.target===$('moreSheet'))$('moreSheet').classList.remove('open')});$('mobileAccountBtn').addEventListener('click',()=>{$('moreSheet').classList.remove('open');openAccount()});qsa('[data-more-tab]').forEach(b=>b.addEventListener('click',()=>{$('moreSheet').classList.remove('open');switchTab(b.dataset.moreTab)}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDelete();closeAccount();$('moreSheet').classList.remove('open')}});
 }
