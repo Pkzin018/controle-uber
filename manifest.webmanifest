@@ -1,0 +1,13 @@
+{
+  "name": "Controle Uber",
+  "short_name": "Controle Uber",
+  "description": "Painel de controle financeiro e operacional para motorista de aplicativo.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101218",
+  "theme_color": "#101218",
+  "icons": [
+    {"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
