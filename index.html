@@ -343,7 +343,7 @@ main{padding:24px 0 72px}.view{display:none}.view.active{display:block}
     </div>
   </div>
 </div>
-<div class="moreSheet" id="moreSheet"><div class="morePanel"><button data-more-tab="desempenho" type="button">Desempenho</button><button data-more-tab="financeiro" type="button">Financeiro e carro</button><button data-more-tab="relatorio" type="button">Relatório mensal</button><button data-more-tab="config" type="button">Configurações</button></div></div>
+<div class="moreSheet" id="moreSheet"><div class="morePanel"><button id="mobileAccountBtn" type="button">Entrar / criar conta</button><button data-more-tab="desempenho" type="button">Desempenho</button><button data-more-tab="financeiro" type="button">Financeiro e carro</button><button data-more-tab="relatorio" type="button">Relatório mensal</button><button data-more-tab="config" type="button">Configurações</button></div></div>
 
 <div class="toast" id="toast"></div>
 
@@ -398,7 +398,19 @@ let pendingDelete=null;
 let toastTimer=null,shiftTimer=null,syncTimer=null,installPrompt=null;
 let account={server:true,email:null,userId:null,name:null};
 function touchState(){state.meta.updatedAt=new Date().toISOString()}
-function localBackup(force=false){try{const arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]');const day=todayISO();if(!force&&arr[0]?.ts?.slice(0,10)===day)return;arr.unshift({ts:new Date().toISOString(),state:clone(state)});localStorage.setItem(BACKUPS,JSON.stringify(arr.slice(0,7)));renderLocalBackups()}catch(e){}}
+function backupKey(){return account.userId?BACKUPS+':'+account.userId:null}
+function localBackup(force=false){
+  const key=backupKey();
+  if(!key)return;
+  try{
+    const arr=JSON.parse(localStorage.getItem(key)||'[]');
+    const day=todayISO();
+    if(!force&&arr[0]?.ts?.slice(0,10)===day)return;
+    arr.unshift({ts:new Date().toISOString(),state:clone(state)});
+    localStorage.setItem(key,JSON.stringify(arr.slice(0,7)));
+    renderLocalBackups();
+  }catch(e){}
+}
 function save({sync=true}={}){touchState();localStorage.setItem(STORAGE,JSON.stringify(state));localBackup();if(sync)scheduleSync()}
 function entryHours(e){return Math.max(0,(n(e.hours)*60+n(e.minutes))/60)}
 function sortedFuelings(){return state.fuelings.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||n(a.odometer)-n(b.odometer))}
@@ -512,8 +524,38 @@ function renderAll(){renderSummary();renderHistory();renderPerformance();renderF
 function switchTab(name){qsa('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));qsa('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${name}`));qsa('[data-mtab]').forEach(b=>b.classList.toggle('active',b.dataset.mtab===name));if(name==='turno')renderShift();if(name==='relatorio')renderReport();window.scrollTo({top:0,behavior:'smooth'})}
 function goLaunch(){clearEntryForm();switchTab('lancar')}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2300)}
-function renderLocalBackups(){const el=$('backupList');if(!el)return;let arr=[];try{arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]')}catch(e){}el.innerHTML=arr.map((b,i)=>`<div class="backupItem"><span>${new Date(b.ts).toLocaleString('pt-BR')}</span><button class="smallTextBtn" data-local-restore="${i}" type="button">Restaurar</button></div>`).join('')||'<div class="muted">Nenhum backup local ainda.</div>'}
-function restoreLocalBackup(index){try{const arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]'),b=arr[index];if(!b)return;state=migrate(clone(b.state));selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();$('monthFilter').value=selectedMonth;save({sync:false});renderAll();toast('Backup local restaurado.')}catch(e){toast('Não foi possível restaurar.') }}
+function renderLocalBackups(){
+  const el=$('backupList');if(!el)return;
+  const key=backupKey();
+  if(!key){el.innerHTML='<div class="muted">Entre na conta para acessar seus backups.</div>';return}
+  let arr=[];
+  try{arr=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
+  el.innerHTML=arr.map((b,i)=>`<div class="backupItem"><span>${new Date(b.ts).toLocaleString('pt-BR')}</span><button class="smallTextBtn" data-local-restore="${i}" type="button">Restaurar</button></div>`).join('')||'<div class="muted">Nenhum backup local ainda.</div>'
+}
+function restoreLocalBackup(index){
+  const key=backupKey();
+  if(!key)return toast('Entre na sua conta primeiro.');
+  try{
+    const arr=JSON.parse(localStorage.getItem(key)||'[]'),b=arr[index];
+    if(!b)return;
+    state=migrate(clone(b.state));
+    selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();
+    $('monthFilter').value=selectedMonth;
+    save({sync:false});
+    renderAll();
+    toast('Backup local restaurado.');
+  }catch(e){toast('Não foi possível restaurar.')}
+}
+function showSignedOutState(){
+  state=clone(DEFAULT_STATE);
+  state.meta.updatedAt=new Date().toISOString();
+  selectedMonth=monthISO();
+  localStorage.removeItem(STORAGE);
+  if($('monthFilter'))$('monthFilter').value=selectedMonth;
+  if($('accountPassword'))$('accountPassword').value='';
+  renderAll();
+  renderLocalBackups();
+}
 async function checkServer(){
   account.server=true;
   try{
@@ -528,11 +570,14 @@ async function checkServer(){
       account.email=null;
       account.userId=null;
       account.name=null;
+      showSignedOutState();
     }
   }catch(e){
     account.server=false;
     account.email=null;
     account.userId=null;
+    account.name=null;
+    showSignedOutState();
   }
   renderAccountStatus();
 }
@@ -555,6 +600,7 @@ function renderAccountStatus(){
   if($('accountTopBtn'))$('accountTopBtn').textContent=online?`● ${displayName}`:'Conta';
   if($('workspaceLabel'))$('workspaceLabel').textContent=online?`Painel de ${firstName}`:'Painel do motorista';
   if($('accountOpenBtn'))$('accountOpenBtn').textContent=online?`Conta · ${displayName}`:'Conta e sincronização';
+  if($('mobileAccountBtn'))$('mobileAccountBtn').textContent=online?`● Conta · ${displayName}`:'Entrar / criar conta';
   if($('accountName')&&document.activeElement!==$('accountName'))$('accountName').value=online?(account.name||displayName):'';
   if($('accountEmail')&&online&&document.activeElement!==$('accountEmail'))$('accountEmail').value=account.email||'';
 }
@@ -708,6 +754,11 @@ async function accountAuth(mode){
       account.userId=data.user?.id||data.session.user.id;
       account.name=name||data.user?.user_metadata?.display_name||email.split('@')[0];
       await ensureProfile(account.name);
+      state=clone(DEFAULT_STATE);
+      selectedMonth=monthISO();
+      localStorage.setItem(STORAGE,JSON.stringify(state));
+      $('monthFilter').value=selectedMonth;
+      renderAll();
       await pushRemote(true);
       renderAccountStatus();
       toast('Conta criada e sincronizada.');
@@ -730,8 +781,13 @@ async function accountAuth(mode){
         renderAll();
         toast('Login realizado e dados da nuvem carregados.');
       }else{
+        state=clone(DEFAULT_STATE);
+        selectedMonth=monthISO();
+        localStorage.setItem(STORAGE,JSON.stringify(state));
+        $('monthFilter').value=selectedMonth;
+        renderAll();
         await pushRemote(true);
-        toast('Login realizado. Seus dados locais foram enviados para a nuvem.');
+        toast('Login realizado. Esta conta começou com um painel vazio.');
       }
     }
   }catch(e){
@@ -739,12 +795,19 @@ async function accountAuth(mode){
   }
 }
 async function logout(){
-  try{await supa.auth.signOut()}catch(e){}
+  try{
+    if(account.userId)await pushRemote(true);
+    await supa.auth.signOut();
+  }catch(e){}
   account.email=null;
   account.userId=null;
   account.name=null;
+  if($('accountEmail'))$('accountEmail').value='';
+  if($('accountName'))$('accountName').value='';
+  showSignedOutState();
   renderAccountStatus();
-  toast('Conta desconectada.');
+  closeAccount();
+  toast('Você saiu da conta. Os dados foram ocultados deste dispositivo.');
 }
 function openAccount(){renderLocalBackups();$('accountModal').classList.add('open')}
 function closeAccount(){$('accountModal').classList.remove('open')}
@@ -761,7 +824,7 @@ function bind(){
   $('shiftStripBtn').addEventListener('click',()=>{switchTab('turno');if(!state.shift?.active)startShift()});$('startShiftBtn').addEventListener('click',startShift);$('endShiftForm').addEventListener('submit',endShift);$('cancelShiftBtn').addEventListener('click',cancelShift);
   qsa('#financeSubnav button').forEach(b=>b.addEventListener('click',()=>showFinanceSub(b.dataset.sub)));$('fuelForm').addEventListener('submit',submitFuel);$('fuelCancelEdit').addEventListener('click',clearFuelForm);$('fuelBody').addEventListener('click',e=>{const a=e.target.closest('[data-fuel-edit]'),d=e.target.closest('[data-fuel-del]');if(a)editFuel(a.dataset.fuelEdit);if(d)openDelete('fuel',d.dataset.fuelDel,'este abastecimento')});$('expenseForm').addEventListener('submit',submitExpense);$('expenseCancelEdit').addEventListener('click',clearExpenseForm);$('expenseBody').addEventListener('click',e=>{const a=e.target.closest('[data-exp-edit]'),d=e.target.closest('[data-exp-del]');if(a)editExpense(a.dataset.expEdit);if(d)openDelete('expense',d.dataset.expDel,'esta despesa')});$('investmentForm').addEventListener('submit',submitInvestment);$('investmentCancelEdit').addEventListener('click',clearInvestmentForm);$('investmentBody').addEventListener('click',e=>{const a=e.target.closest('[data-inv-edit]'),d=e.target.closest('[data-inv-del]');if(a)editInvestment(a.dataset.invEdit);if(d)openDelete('investment',d.dataset.invDel,'esta transferência')});
   $('accountOpenBtn').addEventListener('click',openAccount);$('accountTopBtn').addEventListener('click',openAccount);$('closeAccount').addEventListener('click',closeAccount);$('accountModal').addEventListener('click',e=>{if(e.target===$('accountModal'))closeAccount()});$('loginBtn').addEventListener('click',()=>accountAuth('login'));$('registerBtn').addEventListener('click',()=>accountAuth('register'));$('saveProfileBtn').addEventListener('click',saveProfileName);$('logoutBtn').addEventListener('click',logout);$('pushRemoteBtn').addEventListener('click',()=>pushRemote());$('pullRemoteBtn').addEventListener('click',pullRemote);$('backupNowBtn').addEventListener('click',exportLocalBackupNow);$('backupList').addEventListener('click',e=>{const b=e.target.closest('[data-local-restore]');if(b)restoreLocalBackup(Number(b.dataset.localRestore))});
-  $('moreSheet').addEventListener('click',e=>{if(e.target===$('moreSheet'))$('moreSheet').classList.remove('open')});qsa('[data-more-tab]').forEach(b=>b.addEventListener('click',()=>{$('moreSheet').classList.remove('open');switchTab(b.dataset.moreTab)}));
+  $('moreSheet').addEventListener('click',e=>{if(e.target===$('moreSheet'))$('moreSheet').classList.remove('open')});$('mobileAccountBtn').addEventListener('click',()=>{$('moreSheet').classList.remove('open');openAccount()});qsa('[data-more-tab]').forEach(b=>b.addEventListener('click',()=>{$('moreSheet').classList.remove('open');switchTab(b.dataset.moreTab)}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDelete();closeAccount();$('moreSheet').classList.remove('open')}});
 }
 // reset is handled specially to avoid accidental data loss
@@ -776,8 +839,13 @@ function init(){
     account.email=user?.email||null;
     account.userId=user?.id||null;
     account.name=user?.user_metadata?.display_name||account.name||null;
-    if(user)ensureProfile(account.name).catch(()=>renderAccountStatus());
-    else{account.name=null;renderAccountStatus();}
+    if(user){
+      ensureProfile(account.name).catch(()=>renderAccountStatus());
+    }else{
+      account.name=null;
+      showSignedOutState();
+      renderAccountStatus();
+    }
   });
 }
 init();
