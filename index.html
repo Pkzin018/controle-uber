@@ -315,8 +315,8 @@ main{padding:24px 0 72px}.view{display:none}.view.active{display:block}
     <section class="settingspanel"><div class="formhead"><h2>Dias em que você pode rodar</h2><p>A meta inteligente usa estes dias para contar as noites ainda disponíveis.</p></div><div class="settingsbody"><div class="workdays" id="workDays"><div class="daycheck"><input type="checkbox" id="wd1" value="1"><label for="wd1">Seg</label></div><div class="daycheck"><input type="checkbox" id="wd2" value="2"><label for="wd2">Ter</label></div><div class="daycheck"><input type="checkbox" id="wd3" value="3"><label for="wd3">Qua</label></div><div class="daycheck"><input type="checkbox" id="wd4" value="4"><label for="wd4">Qui</label></div><div class="daycheck"><input type="checkbox" id="wd5" value="5"><label for="wd5">Sex</label></div><div class="daycheck"><input type="checkbox" id="wd6" value="6"><label for="wd6">Sáb</label></div><div class="daycheck"><input type="checkbox" id="wd0" value="0"><label for="wd0">Dom</label></div></div></div></section>
     <section class="settingspanel"><div class="formhead"><h2>Odômetro e manutenção</h2><p>Controle básico para não perder a próxima troca de óleo.</p></div><div class="settingsbody"><div class="fields"><div class="field"><label>Odômetro atual</label><input id="cfgOdometer" type="number" min="0" step="0.1"></div><div class="field"><label>Próxima troca de óleo (km)</label><input id="cfgNextOil" type="number" min="0" step="1"></div></div></div></section>
   </div>
-  <div class="sectionhead"><div><h2>Conta, sincronização e aplicativo</h2><p>Use o servidor incluído no projeto para login, banco SQLite e sincronização entre dispositivos.</p></div></div>
-  <section class="accountpanel"><div class="accountbody"><div class="accountStatus" id="accountStatus"><span class="led"></span><div><strong id="accountStatusTitle">Modo local</strong><div class="muted" id="accountStatusSub" style="font-size:12px;margin-top:2px">Se abrir pelo arquivo HTML, seus dados ficam somente neste navegador.</div></div></div><div class="syncActions"><button class="btn ghost" id="accountOpenBtn" type="button">Conta e sincronização</button><button class="btn ghost" id="installBtn" type="button">Instalar aplicativo</button></div><div class="installbox"><strong>Backup automático local</strong><p id="localBackupStatus">O sistema mantém cópias locais diárias dos seus dados. Com uma conta conectada ao servidor, cada sincronização também gera uma cópia no banco.</p></div></div></section>
+  <div class="sectionhead"><div><h2>Conta, sincronização e aplicativo</h2><p>Entre com sua conta para salvar os dados no Supabase e sincronizar automaticamente entre celular e PC.</p></div></div>
+  <section class="accountpanel"><div class="accountbody"><div class="accountStatus" id="accountStatus"><span class="led"></span><div><strong id="accountStatusTitle">Modo local</strong><div class="muted" id="accountStatusSub" style="font-size:12px;margin-top:2px">Se abrir pelo arquivo HTML, seus dados ficam somente neste navegador.</div></div></div><div class="syncActions"><button class="btn ghost" id="accountOpenBtn" type="button">Conta e sincronização</button><button class="btn ghost" id="installBtn" type="button">Instalar aplicativo</button></div><div class="installbox"><strong>Backup automático local</strong><p id="localBackupStatus">O sistema mantém cópias locais diárias. Com uma conta conectada, seus dados também ficam salvos na nuvem.</p></div></div></section>
 
 </section>
 </main>
@@ -328,14 +328,14 @@ main{padding:24px 0 72px}.view{display:none}.view.active{display:block}
 <div class="helpmodal" id="helpModal" aria-hidden="true"><div class="modal"><div class="modalhead">Como usar o Controle Uber</div><div class="modalbody"><p><b>1.</b> Configure preço do combustível, consumo e reservas por km.</p><p><b>2.</b> Em “Lançar”, informe faturamento, km, horas e corridas.</p><p><b>3.</b> O sistema calcula automaticamente combustível, reserva do carro, lucro líquido, R$/h e R$/km.</p><p><b>4.</b> A aba Desempenho compara meses e identifica padrões dos seus próprios lançamentos.</p></div><div class="modalactions"><button class="btn" id="closeHelp" type="button">Fechar</button></div></div></div>
 <div class="accountModal" id="accountModal">
   <div class="accountDialog">
-    <div class="head"><div><h2>Conta e sincronização</h2><div class="muted" id="accountModalStatus" style="font-size:12px;margin-top:3px">Verificando servidor...</div></div><button class="squarebtn" id="closeAccount" type="button" aria-label="Fechar">×</button></div>
+    <div class="head"><div><h2>Conta e sincronização</h2><div class="muted" id="accountModalStatus" style="font-size:12px;margin-top:3px">Verificando conta na nuvem...</div></div><button class="squarebtn" id="closeAccount" type="button" aria-label="Fechar">×</button></div>
     <div class="body">
       <div class="accountForms">
         <div class="field"><label>E-mail</label><input id="accountEmail" type="email" autocomplete="email" placeholder="voce@email.com"></div>
         <div class="field"><label>Senha</label><input id="accountPassword" type="password" autocomplete="current-password" placeholder="mínimo 6 caracteres"></div>
       </div>
       <div class="syncActions"><button class="btn" id="loginBtn" type="button">Entrar</button><button class="btn ghost" id="registerBtn" type="button">Criar conta</button><button class="btn ghost" id="logoutBtn" type="button">Sair</button></div>
-      <div class="sectionhead" style="margin-top:20px"><div><h2 style="font-size:15px">Sincronização</h2><p>O servidor incluído usa SQLite. Para sincronizar entre celular e PC, ambos precisam acessar o mesmo servidor ou ele precisa estar publicado na internet.</p></div></div>
+      <div class="sectionhead" style="margin-top:20px"><div><h2 style="font-size:15px">Sincronização</h2><p>Os dados da conta são armazenados no Supabase. Ao entrar com a mesma conta em outro aparelho, você pode carregar e sincronizar seus dados.</p></div></div>
       <div class="syncActions"><button class="btn ghost" id="pushRemoteBtn" type="button">Enviar este dispositivo</button><button class="btn ghost" id="pullRemoteBtn" type="button">Baixar da conta</button><button class="btn ghost" id="backupNowBtn" type="button">Criar backup agora</button></div>
       <div class="sectionhead" style="margin-top:20px"><div><h2 style="font-size:15px">Backups locais</h2><p>Até 7 cópias diárias ficam guardadas neste navegador.</p></div></div>
       <div class="backupList" id="backupList"></div>
@@ -346,12 +346,16 @@ main{padding:24px 0 72px}.view{display:none}.view.active{display:block}
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (()=>{
 'use strict';
 const STORAGE='controleUberV1';
 const BACKUPS='controleUberBackupsV7';
 const TOKEN_KEY='controleUberTokenV7';
+const SUPABASE_URL='https://yxvjjniewxoopqjrccuk.supabase.co';
+const SUPABASE_KEY='sb_publishable_y8FGPYBw5c-1ApBZqYzyKg_hcdzrCht';
+const supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const moneyFmt=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
 const numFmt=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1});
 const pctFmt=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1});
@@ -391,7 +395,7 @@ let selectedMonth=(state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort
 let chartMode='night';
 let pendingDelete=null;
 let toastTimer=null,shiftTimer=null,syncTimer=null,installPrompt=null;
-let account={server:false,email:null};
+let account={server:true,email:null,userId:null};
 function touchState(){state.meta.updatedAt=new Date().toISOString()}
 function localBackup(force=false){try{const arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]');const day=todayISO();if(!force&&arr[0]?.ts?.slice(0,10)===day)return;arr.unshift({ts:new Date().toISOString(),state:clone(state)});localStorage.setItem(BACKUPS,JSON.stringify(arr.slice(0,7)));renderLocalBackups()}catch(e){}}
 function save({sync=true}={}){touchState();localStorage.setItem(STORAGE,JSON.stringify(state));localBackup();if(sync)scheduleSync()}
@@ -509,15 +513,184 @@ function goLaunch(){clearEntryForm();switchTab('lancar')}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2300)}
 function renderLocalBackups(){const el=$('backupList');if(!el)return;let arr=[];try{arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]')}catch(e){}el.innerHTML=arr.map((b,i)=>`<div class="backupItem"><span>${new Date(b.ts).toLocaleString('pt-BR')}</span><button class="smallTextBtn" data-local-restore="${i}" type="button">Restaurar</button></div>`).join('')||'<div class="muted">Nenhum backup local ainda.</div>'}
 function restoreLocalBackup(index){try{const arr=JSON.parse(localStorage.getItem(BACKUPS)||'[]'),b=arr[index];if(!b)return;state=migrate(clone(b.state));selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();$('monthFilter').value=selectedMonth;save({sync:false});renderAll();toast('Backup local restaurado.')}catch(e){toast('Não foi possível restaurar.') }}
-async function api(path,opts={}){const token=localStorage.getItem(TOKEN_KEY);const headers={'Content-Type':'application/json',...(opts.headers||{})};if(token)headers.Authorization=`Bearer ${token}`;const r=await fetch(path,{...opts,headers});let data={};try{data=await r.json()}catch(e){}if(!r.ok)throw new Error(data.error||`Erro ${r.status}`);return data}
-async function checkServer(){if(location.protocol==='file:'){account.server=false;renderAccountStatus();return}try{await api('/api/ping');account.server=true;const token=localStorage.getItem(TOKEN_KEY);if(token){try{const me=await api('/api/me');account.email=me.email;await autoReconcile()}catch(e){localStorage.removeItem(TOKEN_KEY);account.email=null}}}catch(e){account.server=false;account.email=null}renderAccountStatus()}
-function renderAccountStatus(){if(!$('accountStatus'))return;const online=account.server&&account.email;$('accountStatus').classList.toggle('online',!!online);$('accountStatusTitle').textContent=online?`Conectado · ${account.email}`:account.server?'Servidor disponível · sem login':'Modo local';$('accountStatusSub').textContent=online?'Alterações são sincronizadas automaticamente com o banco SQLite.':account.server?'Faça login para sincronizar seus dados entre dispositivos conectados a este servidor.':'Abra pelo servidor incluído no projeto para ativar conta, banco de dados, PWA e sincronização.';if($('accountModalStatus'))$('accountModalStatus').textContent=$('accountStatusSub').textContent}
-async function autoReconcile(){if(!account.email)return;try{const remote=await api('/api/state');if(remote.state){const ru=remote.updated_at||'',lu=state.meta?.updatedAt||'';if(ru>lu){state=migrate(remote.state);state.meta.updatedAt=ru;selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||selectedMonth;localStorage.setItem(STORAGE,JSON.stringify(state));$('monthFilter').value=selectedMonth;renderAll()}else if(lu>ru){await pushRemote(true)}}else{await pushRemote(true)}}catch(e){}}
-function scheduleSync(){if(!account.server||!account.email)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>pushRemote(true),900)}
-async function pushRemote(silent=false){if(!account.server||!account.email){if(!silent)toast('Conecte uma conta primeiro.');return}try{const r=await api('/api/state',{method:'PUT',body:JSON.stringify({state})});if(r.updated_at){state.meta.updatedAt=r.updated_at;localStorage.setItem(STORAGE,JSON.stringify(state))}if(!silent)toast('Dados enviados para a conta.')}catch(e){if(!silent)toast(e.message)}}
-async function pullRemote(silent=false){if(!account.server||!account.email){if(!silent)toast('Conecte uma conta primeiro.');return}try{const r=await api('/api/state');if(!r.state){if(!silent)toast('A conta ainda não possui dados salvos.');return false}localBackup(true);state=migrate(r.state);if(r.updated_at)state.meta.updatedAt=r.updated_at;selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();localStorage.setItem(STORAGE,JSON.stringify(state));$('monthFilter').value=selectedMonth;renderAll();if(!silent)toast('Dados baixados da conta.');return true}catch(e){if(!silent)toast(e.message);return false}}
-async function accountAuth(mode){if(!account.server)return toast('Inicie o app pelo servidor para usar conta e sincronização.');const email=$('accountEmail').value.trim(),password=$('accountPassword').value;if(!email||password.length<6)return toast('Informe e-mail e senha com pelo menos 6 caracteres.');try{const r=await api(`/api/${mode}`,{method:'POST',body:JSON.stringify({email,password})});localStorage.setItem(TOKEN_KEY,r.token);account.email=r.email;renderAccountStatus();if(mode==='register'){await pushRemote(true);toast('Conta criada e sincronizada.')}else{const remote=await api('/api/state');if(remote.state){localBackup(true);state=migrate(remote.state);if(remote.updated_at)state.meta.updatedAt=remote.updated_at;selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();localStorage.setItem(STORAGE,JSON.stringify(state));$('monthFilter').value=selectedMonth;renderAll();toast('Login realizado e dados da conta carregados.')}else{await pushRemote(true);toast('Login realizado. Seus dados locais foram enviados para a conta.')}}}catch(e){toast(e.message)}}
-async function logout(){if(account.server&&account.email){try{await api('/api/logout',{method:'POST'})}catch(e){}}localStorage.removeItem(TOKEN_KEY);account.email=null;renderAccountStatus();toast('Conta desconectada.')}
+async function checkServer(){
+  account.server=true;
+  try{
+    const {data:{session}}=await supa.auth.getSession();
+    if(session?.user){
+      account.email=session.user.email||null;
+      account.userId=session.user.id;
+      await autoReconcile();
+    }else{
+      account.email=null;
+      account.userId=null;
+    }
+  }catch(e){
+    account.server=false;
+    account.email=null;
+    account.userId=null;
+  }
+  renderAccountStatus();
+}
+function renderAccountStatus(){
+  if(!$('accountStatus'))return;
+  const online=!!account.email;
+  $('accountStatus').classList.toggle('online',online);
+  $('accountStatusTitle').textContent=online?`Conectado · ${account.email}`:'Nuvem pronta · sem login';
+  $('accountStatusSub').textContent=online
+    ?'Alterações são sincronizadas automaticamente com o Supabase.'
+    :'Entre ou crie uma conta para sincronizar seus dados entre celular e PC.';
+  if($('accountModalStatus'))$('accountModalStatus').textContent=$('accountStatusSub').textContent;
+}
+async function ensureProfile(){
+  if(!account.userId)return;
+  await supa.from('profiles').upsert(
+    {user_id:account.userId,email:account.email},
+    {onConflict:'user_id'}
+  );
+}
+async function fetchRemoteState(){
+  if(!account.userId)return null;
+  const {data,error}=await supa
+    .from('user_app_state')
+    .select('state,updated_at')
+    .eq('user_id',account.userId)
+    .maybeSingle();
+  if(error)throw error;
+  return data||null;
+}
+async function autoReconcile(){
+  if(!account.userId)return;
+  try{
+    await ensureProfile();
+    const remote=await fetchRemoteState();
+    if(remote?.state){
+      const ru=remote.updated_at||'',lu=state.meta?.updatedAt||'';
+      if(ru>lu){
+        localBackup(true);
+        state=migrate(remote.state);
+        state.meta.updatedAt=ru;
+        selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||selectedMonth;
+        localStorage.setItem(STORAGE,JSON.stringify(state));
+        $('monthFilter').value=selectedMonth;
+        renderAll();
+      }else if(lu>ru){
+        await pushRemote(true);
+      }
+    }else{
+      await pushRemote(true);
+    }
+  }catch(e){
+    console.error('Falha ao reconciliar dados:',e);
+  }
+}
+function scheduleSync(){
+  if(!account.userId)return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>pushRemote(true),900);
+}
+async function pushRemote(silent=false){
+  if(!account.userId){
+    if(!silent)toast('Entre na sua conta primeiro.');
+    return;
+  }
+  try{
+    const cloudState=clone(state);
+    const {data,error}=await supa
+      .from('user_app_state')
+      .upsert({user_id:account.userId,state:cloudState},{onConflict:'user_id'})
+      .select('updated_at')
+      .single();
+    if(error)throw error;
+    if(data?.updated_at){
+      state.meta.updatedAt=data.updated_at;
+      localStorage.setItem(STORAGE,JSON.stringify(state));
+    }
+    if(!silent)toast('Dados enviados para a nuvem.');
+  }catch(e){
+    if(!silent)toast(e.message||'Falha ao sincronizar.');
+  }
+}
+async function pullRemote(silent=false){
+  if(!account.userId){
+    if(!silent)toast('Entre na sua conta primeiro.');
+    return false;
+  }
+  try{
+    const remote=await fetchRemoteState();
+    if(!remote?.state){
+      if(!silent)toast('A conta ainda não possui dados salvos.');
+      return false;
+    }
+    localBackup(true);
+    state=migrate(remote.state);
+    if(remote.updated_at)state.meta.updatedAt=remote.updated_at;
+    selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();
+    localStorage.setItem(STORAGE,JSON.stringify(state));
+    $('monthFilter').value=selectedMonth;
+    renderAll();
+    if(!silent)toast('Dados baixados da nuvem.');
+    return true;
+  }catch(e){
+    if(!silent)toast(e.message||'Falha ao baixar os dados.');
+    return false;
+  }
+}
+async function accountAuth(mode){
+  const email=$('accountEmail').value.trim();
+  const password=$('accountPassword').value;
+  if(!email||password.length<6)return toast('Informe e-mail e senha com pelo menos 6 caracteres.');
+  try{
+    if(mode==='register'){
+      const {data,error}=await supa.auth.signUp({
+        email,
+        password,
+        options:{emailRedirectTo:location.origin+location.pathname}
+      });
+      if(error)throw error;
+      if(!data.session){
+        toast('Conta criada. Confira seu e-mail para confirmar o cadastro.');
+        return;
+      }
+      account.email=data.user?.email||email;
+      account.userId=data.user?.id||data.session.user.id;
+      await ensureProfile();
+      await pushRemote(true);
+      renderAccountStatus();
+      toast('Conta criada e sincronizada.');
+    }else{
+      const {data,error}=await supa.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      account.email=data.user.email;
+      account.userId=data.user.id;
+      await ensureProfile();
+      renderAccountStatus();
+      const remote=await fetchRemoteState();
+      if(remote?.state){
+        localBackup(true);
+        state=migrate(remote.state);
+        if(remote.updated_at)state.meta.updatedAt=remote.updated_at;
+        selectedMonth=state.entries.map(e=>e.date?.slice(0,7)).filter(Boolean).sort().pop()||monthISO();
+        localStorage.setItem(STORAGE,JSON.stringify(state));
+        $('monthFilter').value=selectedMonth;
+        renderAll();
+        toast('Login realizado e dados da nuvem carregados.');
+      }else{
+        await pushRemote(true);
+        toast('Login realizado. Seus dados locais foram enviados para a nuvem.');
+      }
+    }
+  }catch(e){
+    toast(e.message||'Não foi possível acessar a conta.');
+  }
+}
+async function logout(){
+  try{await supa.auth.signOut()}catch(e){}
+  account.email=null;
+  account.userId=null;
+  renderAccountStatus();
+  toast('Conta desconectada.');
+}
 function openAccount(){renderLocalBackups();$('accountModal').classList.add('open')}
 function closeAccount(){$('accountModal').classList.remove('open')}
 function exportLocalBackupNow(){localBackup(true);exportBackup();toast('Backup criado e exportado.')}
@@ -543,6 +716,12 @@ function init(){
   // Donut receives a fourth line for extras.
   const legend=$('pctReserve')?.closest('.costlegend');if(legend&&!$('pctExtras'))legend.insertAdjacentHTML('beforeend','<div class="costitem"><span class="costdot" style="background:#9a86e6"></span><div><span>Despesas extras</span><small>custos pontuais + recorrentes</small></div><strong id="pctExtras">0%</strong></div>');
   bind();clearFuelForm();clearExpenseForm();clearInvestmentForm();localBackup();renderAll();startShiftTicker();initPwa();checkServer();
+  supa.auth.onAuthStateChange((_event,session)=>{
+    const user=session?.user||null;
+    account.email=user?.email||null;
+    account.userId=user?.id||null;
+    renderAccountStatus();
+  });
 }
 init();
 })();
